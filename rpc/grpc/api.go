@@ -37,3 +37,26 @@ func (bapi *broadcastAPI) BroadcastTx(ctx context.Context, req *RequestBroadcast
 		},
 	}, nil
 }
+
+type blockAPI struct {
+}
+
+func (bapi *blockAPI) BlockResults(ctx context.Context, req *RequestBlockResults) (*ResponseBlockResults, error) {
+	res, err := core.BlockResults(&rpctypes.Context{}, &req.Height)
+	if err != nil {
+		return nil, err
+	}
+
+	return &ResponseBlockResults{
+		Height:     res.Height,
+		TxsResults: res.TxsResults,
+		ResBeginBlock: &abci.ResponseBeginBlock{
+			Events: res.BeginBlockEvents,
+		},
+		ResEndBlock: &abci.ResponseEndBlock{
+			ValidatorUpdates:      res.ValidatorUpdates,
+			ConsensusParamUpdates: res.ConsensusParamUpdates,
+			Events:                res.EndBlockEvents,
+		},
+	}, nil
+}

@@ -13,6 +13,10 @@ message RequestBroadcastTx {
   bytes tx = 1;
 }
 
+message RequestBlockResults {
+  int64 height = 1;
+}
+
 //----------------------------------------
 // Response types
 
@@ -23,10 +27,21 @@ message ResponseBroadcastTx {
   ostracon.abci.ResponseDeliverTx deliver_tx = 2;
 }
 
+message ResponseBlockResults {
+  int64    height                                          = 1;
+  repeated ostracon.abci.ResponseDeliverTx txs_results     = 2;
+  ostracon.abci.ResponseBeginBlock         res_begin_block = 3;
+  ostracon.abci.ResponseEndBlock           res_end_block   = 4;
+}
+
 //----------------------------------------
 // Service Definition
 
 service BroadcastAPI {
   rpc Ping(RequestPing) returns (ResponsePing);
   rpc BroadcastTx(RequestBroadcastTx) returns (ResponseBroadcastTx);
+}
+
+service BlockAPI {
+  rpc BlockResults(RequestBlockResults) returns (ResponseBlockResults);
 }

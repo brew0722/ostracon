@@ -54,9 +54,9 @@ func waitForRPC() {
 }
 
 func waitForGRPC() {
-	client := GetGRPCClient()
+	broadcastClient, _ := GetGRPCClient()
 	for {
-		_, err := client.Ping(context.Background(), &core_grpc.RequestPing{})
+		_, err := broadcastClient.Ping(context.Background(), &core_grpc.RequestPing{})
 		if err == nil {
 			return
 		}
@@ -110,7 +110,7 @@ func GetConfig(forceCreate ...bool) *cfg.Config {
 	return globalConfig
 }
 
-func GetGRPCClient() core_grpc.BroadcastAPIClient {
+func GetGRPCClient() (core_grpc.BroadcastAPIClient, core_grpc.BlockAPIClient) {
 	grpcAddr := globalConfig.RPC.GRPCListenAddress
 	return core_grpc.StartGRPCClient(grpcAddr)
 }

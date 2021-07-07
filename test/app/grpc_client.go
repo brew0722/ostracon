@@ -26,17 +26,34 @@ func main() {
 		os.Exit(1)
 	}
 
-	clientGRPC := coregrpc.StartGRPCClient(grpcAddr)
-	res, err := clientGRPC.BroadcastTx(context.Background(), &coregrpc.RequestBroadcastTx{Tx: txBytes})
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+	broadcastClientGRPC, blockClientGRPC := coregrpc.StartGRPCClient(grpcAddr)
+	{
+		res, err := broadcastClientGRPC.BroadcastTx(context.Background(), &coregrpc.RequestBroadcastTx{Tx: txBytes})
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		bz, err := tmjson.Marshal(res)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		fmt.Println(string(bz))
 	}
 
-	bz, err := tmjson.Marshal(res)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+	{
+		res, err := blockClientGRPC.BlockResults(context.Background(), &coregrpc.RequestBlockResults{Height: 1})
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		bz, err := tmjson.Marshal(res)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		fmt.Println(string(bz))
 	}
-	fmt.Println(string(bz))
 }
