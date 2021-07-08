@@ -35,6 +35,16 @@ func TestBroadcastTx(t *testing.T) {
 	require.EqualValues(t, 0, res.DeliverTx.Code)
 }
 
+func TestBlock(t *testing.T) {
+	_, blockClient := rpctest.GetGRPCClient()
+	res, err := blockClient.Block(
+		context.Background(),
+		&core_grpc.RequestBlock{Height: 1},
+	)
+	require.NoError(t, err)
+	require.EqualValues(t, 1, res.GetBlock().GetHeader().Height)
+}
+
 func TestBlockResults(t *testing.T) {
 	_, blockClient := rpctest.GetGRPCClient()
 	res, err := blockClient.BlockResults(

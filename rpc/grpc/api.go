@@ -41,6 +41,22 @@ func (bapi *broadcastAPI) BroadcastTx(ctx context.Context, req *RequestBroadcast
 type blockAPI struct {
 }
 
+func (bapi *blockAPI) Block(ctx context.Context, req *RequestBlock) (*ResponseBlock, error) {
+	res, err := core.Block(&rpctypes.Context{}, &req.Height)
+	if err != nil {
+		return nil, err
+	}
+
+	protoBlock, err := res.Block.ToProto()
+	if err != nil {
+		return nil, err
+	}
+
+	return &ResponseBlock{
+		Block: protoBlock,
+	}, nil
+}
+
 func (bapi *blockAPI) BlockResults(ctx context.Context, req *RequestBlockResults) (*ResponseBlockResults, error) {
 	res, err := core.BlockResults(&rpctypes.Context{}, &req.Height)
 	if err != nil {

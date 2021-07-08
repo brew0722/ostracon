@@ -2,6 +2,7 @@ syntax = "proto3";
 package ostracon.rpc.grpc;
 option  go_package = "github.com/line/ostracon/rpc/grpc;coregrpc";
 
+import "ostracon/types/block.proto";
 import "ostracon/abci/types.proto";
 
 //----------------------------------------
@@ -11,6 +12,10 @@ message RequestPing {}
 
 message RequestBroadcastTx {
   bytes tx = 1;
+}
+
+message RequestBlock {
+  int64 height = 1;
 }
 
 message RequestBlockResults {
@@ -25,6 +30,10 @@ message ResponsePing {}
 message ResponseBroadcastTx {
   ostracon.abci.ResponseCheckTx   check_tx   = 1;
   ostracon.abci.ResponseDeliverTx deliver_tx = 2;
+}
+
+message ResponseBlock {
+  ostracon.types.Block block = 1;
 }
 
 message ResponseBlockResults {
@@ -43,5 +52,6 @@ service BroadcastAPI {
 }
 
 service BlockAPI {
+  rpc Block(RequestBlock) returns (ResponseBlock);
   rpc BlockResults(RequestBlockResults) returns (ResponseBlockResults);
 }
