@@ -10,6 +10,7 @@ import (
 	"github.com/line/ostracon/abci/example/kvstore"
 	core_grpc "github.com/line/ostracon/rpc/grpc"
 	rpctest "github.com/line/ostracon/rpc/test"
+	"github.com/line/ostracon/types"
 )
 
 func TestMain(m *testing.M) {
@@ -35,7 +36,7 @@ func TestBroadcastTx(t *testing.T) {
 	require.EqualValues(t, 0, res.DeliverTx.Code)
 }
 
-func TestBlock(t *testing.T) {
+func TestBlockAndBlockByHash(t *testing.T) {
 	_, blockClient := rpctest.GetGRPCClient()
 	res, err := blockClient.Block(
 		context.Background(),
@@ -43,6 +44,17 @@ func TestBlock(t *testing.T) {
 	)
 	require.NoError(t, err)
 	require.EqualValues(t, 1, res.GetBlock().GetHeader().Height)
+
+	block, err := types.BlockFromProto(res.GetBlock())
+	require.NoError(t, err)
+
+	res, err = blockClient.BlockByHash(
+		context.Background(),
+		&core_grpc.RequestBlockByHash{Hash: block.Hash()},
+	)
+	require.NoError(t, err)
+	require.EqualValues(t, 1, res.GetBlock().GetHeader().Height)
+
 }
 
 func TestBlockResults(t *testing.T) {

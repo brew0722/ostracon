@@ -18,6 +18,10 @@ message RequestBlock {
   int64 height = 1;
 }
 
+message RequestBlockByHash {
+  bytes hash = 1;
+}
+
 message RequestBlockResults {
   int64 height = 1;
 }
@@ -53,5 +57,6 @@ service BroadcastAPI {
 
 service BlockAPI {
   rpc Block(RequestBlock) returns (ResponseBlock);
+  rpc BlockByHash(RequestBlockByHash) returns (ResponseBlock);
   rpc BlockResults(RequestBlockResults) returns (ResponseBlockResults);
 }

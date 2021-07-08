@@ -57,6 +57,22 @@ func (bapi *blockAPI) Block(ctx context.Context, req *RequestBlock) (*ResponseBl
 	}, nil
 }
 
+func (bapi *blockAPI) BlockByHash(ctx context.Context, req *RequestBlockByHash) (*ResponseBlock, error) {
+	res, err := core.BlockByHash(&rpctypes.Context{}, req.Hash)
+	if err != nil {
+		return nil, err
+	}
+
+	protoBlock, err := res.Block.ToProto()
+	if err != nil {
+		return nil, err
+	}
+
+	return &ResponseBlock{
+		Block: protoBlock,
+	}, nil
+}
+
 func (bapi *blockAPI) BlockResults(ctx context.Context, req *RequestBlockResults) (*ResponseBlockResults, error) {
 	res, err := core.BlockResults(&rpctypes.Context{}, &req.Height)
 	if err != nil {
